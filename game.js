@@ -184,6 +184,6 @@ class Scoreboard {
     }
 }
 
-const game = new Game(2);
+const game = new Game(6);
 game.createGame();
 

@@ -1,0 +1,161 @@
+body {
+    margin: 0;
+    min-height: 100vh;
+    min-width: 100vw;
+    display: flex;
+    flex-flow: column;
+}
+
+#game {
+    background:
+    linear-gradient(27deg, #151515 5px, transparent 5px) 0 5px,
+    linear-gradient(207deg, #151515 5px, transparent 5px) 10px 0px,
+    linear-gradient(27deg, #222 5px, transparent 5px) 0px 10px,
+    linear-gradient(207deg, #222 5px, transparent 5px) 10px 5px,
+    linear-gradient(90deg, #1b1b1b 10px, transparent 10px),
+    linear-gradient(#1d1d1d 25%, #1a1a1a 25%, #1a1a1a 50%, transparent 50%, transparent 75%, #242424 75%, #242424);
+    background-color: #131313;
+    background-size: 20px 20px;
+    display: flex;
+    align-items: center;
+    flex-flow: column;
+    min-height: 800px;
+    flex-grow: 1;
+}
+
+footer {
+    background-color: black;
+    height: 20px;
+    width: 100%;
+    font-size: 15px;
+    color: white;
+    display: flex;
+}
+
+#footer-left{
+    margin: 0 10px;
+}
+
+#footer-right{
+    margin-left: auto;
+    margin-right: 10px;
+}
+
+#gameboard {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr;
+    grid-template-rows: 1fr 1fr 1fr 1fr 1fr 1fr;
+    width: fit-content;
+    height: fit-content;
+    gap: 10px;
+}
+
+#menu {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    align-items: center;
+    background-color: black;
+    height: 50px;
+}
+
+.menubutton {
+    padding: 10px;
+    color:white;
+    background-color: black;
+    font-size: 20px;
+    margin-left: 10px;
+}
+
+.menubutton:hover {
+    color: black;
+    background-color: white;
+    cursor: pointer;
+}
+
+#head {
+    background-color: burlywood;
+    padding: 10;
+    margin: 0;
+    height: 50px;
+}
+
+#stats {
+    margin: 0;
+    display: flex;
+    flex-flow: column;
+}
+
+.statsline {
+    width: 600px;
+    text-align: right;
+    font-size: 20px;
+    padding: 10px;
+    color: white;
+}
+
+.tile {
+    width: 100px;
+    height: 100px;
+    cursor: pointer;
+    border-radius: 5px;
+    margin: 0;
+    font-size: 50px;
+    background-color: transparent;
+    perspective: 1000px;
+}
+
+.inner-tile {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    transition: transform 0.8s;
+    transform-style: preserve-3d;
+}
+
+.tile.flipped .inner-tile {
+    transform: rotateY(180deg);
+}
+
+.tile-front, .tile-back {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    backface-visibility: hidden;
+    border-radius: 5px;
+}
+
+.tile-front {
+    background: rgb(34,193,195);
+    background: linear-gradient(0deg, rgba(34,193,195,1) 0%, rgba(253,187,45,1) 100%);
+}
+
+.tile-back {
+    background-color: lightgoldenrodyellow;
+    transform: rotateY(180deg);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#win {
+    color: white;
+    text-shadow: 2px 2px black;
+    background-color: transparent;
+    color: gold;
+    font-size: 80px;
+    position: absolute;
+    top: 20%;
+    visibility: hidden;
+    display: flex;
+    flex-flow: column;
+    align-items: center;
+}
+
+.winButton {
+    margin: 10px;
+    font-size: 30px;
+    width: 30%;
+    height: 50px;
+}
+

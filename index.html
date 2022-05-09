@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>Pexeso</title>
+        <link rel="stylesheet" href="styles.css"/>
+        <script src="game.js" defer></script>
+    </head>
+
+    <body>
+        <div id="menu">
+            <div id="newGameButton" class="menubutton">New game</div>
+            <div id="scoreboardButton" class="menubutton">Scoreboard</div>
+        </div>
+        <div id="game">
+            <div id="stats">
+                <div class="statsline" id="movesCounter">moves: 0</div>
+                <div class="statsline" id="gameTime">time: 0 s</div>
+            </div>
+            <div id="gameboard">
+                <!-- Tiles are generated here by JavaScript -->
+            </div>
+            <div id="win">
+                <p>Winner Winner Chicken Dinner!</p>
+                <button id="playAgainButton" class="winButton">Play again</button>
+                <button id="winScoreBoardButton" class="winButton">Scoreboard</button>
+            </div>
+        </div>
+        <!-- <div id="scoreboard">
+            scoreboard
+        </div> -->
+        
+    </body>
+    <footer>
+        <div id="footer-left">
+            KAJ semester project
+        </div>
+        <div id="footer-right">
+            &copy; Petr Jerabek 2022
+        </div>
+    </footer>
+</html>

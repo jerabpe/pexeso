@@ -49,14 +49,18 @@ class Game {
         this.saveScoreButton = document.querySelector('#saveScoreButton');
         this.scoreForm = document.querySelector('#scoreForm');
         this.saveScoreButton.addEventListener('click', e => {
-            this.saveScore();
-            this.hideNameInput();
+            if(this.validateInput(this.nameInput.value)){
+                this.saveScore();
+                this.hideNameInput();
+            }
         });
         this.nameInput.addEventListener('keyup', e => {
             if(e.key == 'Enter'){
                 e.preventDefault();
-                this.saveScore();
-                this.hideNameInput();
+                if(this.validateInput(this.nameInput.value)){
+                    this.saveScore();
+                    this.hideNameInput();
+                }
             }
         });
     }
@@ -65,6 +69,14 @@ class Game {
         const nameInput = this.nameInput.value;
         const score = new Score(nameInput, this.timer, this.moveCounter);
         window.localStorage.setItem(JSON.stringify(score), '');
+    }
+
+    validateInput(input){
+        if(input.length < 3 || input.length > 20){
+            alert("Name has to be 3-20 characters long.");
+            return false;
+        }
+        return true;
     }
 
     hideNameInput(){
@@ -230,7 +242,16 @@ class Scoreboard {
     }
 
     show(){
+        this.scoreboardEl.innerHTML = '';
         this.scoreboardEl.style.display = 'flex';
+        this.table = document.createElement('table');
+        this.table.id = 'scoreTable';
+        const caption = document.createElement('caption');
+        caption.innerText = 'Top 10 scores';
+        this.table.append(caption);
+        const thead = this.table.insertRow();
+        thead.innerHTML = '<tr><th>Position</th><th>Name</th><th>Moves</th><th>Time</th></tr>';
+        this.table.append(thead);
         const keys = Object.keys(window.localStorage);
         const scores = [];
         for(let s of keys){
@@ -238,10 +259,10 @@ class Scoreboard {
 
         }
         scores.sort((a,b) => {
-            if(a.moveCounter == b.moveCounter){
-                return a.timer - b.timer;
+            if(a.moves == b.moves){
+                return a.time - b.time;
             } else {
-                return a.moveCounter - b.moveCounter;
+                return a.moves - b.moves;
             }
         });
         for(let i=0; i<10; i++){
@@ -268,10 +289,11 @@ class Scoreboard {
                 tr.classList.add('third');
             }
         }
+        this.scoreboardEl.append(this.table);
     }
 
     hide(){
-        this.scoreboardEl.style.display = 'none';
+        this.scoreboardEl.innerHTML = '';
     }
 }
 
@@ -286,8 +308,9 @@ newGameButton.addEventListener('click', e => {
         game.gameEl.style.display = 'flex';
     }
     if(game.gameStarted){
-        alert("really wanna do it?"); //TODO nice dialog
-        game.createGame();
+        if(confirm("You are in the middle of a game, are you sure you want to start a new one?")){
+            game.createGame();
+        }
     } else {
         game.createGame();
     }

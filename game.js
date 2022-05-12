@@ -276,7 +276,7 @@ class Scoreboard {
 }
 
 const scoreboard = new Scoreboard();
-const game = new Game(2);
+const game = new Game(6);
 game.createGame();
 
 const newGameButton = document.querySelector("#newGameButton");

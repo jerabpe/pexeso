@@ -29,36 +29,32 @@ class Game {
         this.flipped = [];
         this.found = 0;
         this.tiles = null;
-        this.newGameButton = document.querySelector("#newGameButton");
-        newGameButton.addEventListener('click', e => {
-            if(this.gameStarted){
-                alert("really wanna do it?"); //TODO nice dialog
-                this.createGame();
-            } else {
-                this.createGame();
-            }
-        });
         this.winEl = document.querySelector('#win');
         document.querySelector('#playAgainButton').addEventListener('click', e => this.createGame());
+        this.wonTextEl = document.querySelector('#wonText');
+        this.nameInput = document.querySelector('#name');
+        this.gameEl = document.querySelector('#game');
     }
 
     clearGame(){
+        if(this.timerLoop){
+            clearInterval(this.timerLoop);
+        }
         this.board.innerHTML = ''; //delete tiles
         this.winEl.style.visibility = 'hidden';
         this.board.style.filter = '';
-        this.counterEl.innerText = 'time: 0 s';
+        this.counterEl.innerText = 'Time: 0 s';
+        this.movesEl.innerText = 'Moves: 0';
         this.timer = 0;
         this.moveCounter = 0;
         this.flipped = [];
         this.tiles = [];
         this.found = 0;
+        this.gameStarted = false;
     }
 
     createGame(){
         this.clearGame();
-        console.log(this);
-        //reset counters
-        // this.stopGame();
         let pics = generateEmojis(this.size); //choose random emojis from range emLB,emUB
         pics = pics.concat(pics); //double the array -> every emoji is there twice
         //shuffle array
@@ -97,7 +93,7 @@ class Game {
             game.gameStarted = true;
         }
         game.moveCounter++;
-        game.movesEl.innerHTML = `moves: ${game.moveCounter}`;
+        game.movesEl.innerHTML = `Moves: ${game.moveCounter}`;
         const tile =  e.currentTarget;
         if(!tile.classList.contains('flipped')){
             tile.classList.add('flipped');
@@ -143,15 +139,14 @@ class Game {
         tileB.style.visibility = 'hidden';
     }
 
-    showAllTiles(){
-        
-    }
-
     stopGame(){
         this.gameStarted = false;
         clearInterval(this.timerLoop);
         this.found = 0;
         if(this.tiles){
+            const audio = new Audio();
+            audio.src = 'assets/success-fanfare-trumpets.mp3';
+            audio.play();
             setTimeout(() => {
                 for(const t of this.tiles){
                     t.style.visibility = 'visible';
@@ -163,7 +158,10 @@ class Game {
                     t.classList.add('flipped');
                 }
                 this.winEl.style.visibility = 'visible';
+                const timeStr = this.timer >= 60 ? `${Math.floor(game.timer/60)} min ${game.timer%60} s`: `${this.timer} s`;
+                this.wonTextEl.innerText = `You won with ${this.moveCounter} moves in ${timeStr}`;
                 this.board.style.filter = 'blur(2px)';
+                this.nameInput.focus();
             }, 1500);
         }
     }
@@ -171,9 +169,29 @@ class Game {
     incrementTimer(game){
         game.timer++;
         if(game.timer > 60){
-            game.counterEl.innerHTML = `time: ${Math.floor(game.timer/60)} min ${game.timer%60} s`;
+            game.counterEl.innerHTML = `Time: ${Math.floor(game.timer/60)} min ${game.timer%60} s`;
         } else {
-            game.counterEl.innerText = `time: ${game.timer} s`;
+            game.counterEl.innerText = `Time: ${game.timer} s`;
+        }
+    }
+
+    hide(){
+        this.gameEl.style.display = 'none';
+    }
+}
+
+class Score {
+    constructor(name, time, moves){
+        this.name = name;
+        this.time = time;
+        this.moves = moves;
+    }
+
+    time2Str(){
+        if(time > 60){
+            return `time: ${Math.floor(time/60)} min ${time%60} s`;
+        } else {
+            return `time: ${time} s`;
         }
     }
 }
@@ -181,9 +199,55 @@ class Game {
 class Scoreboard {
     constructor(){
         //todo
+        this.table = document.querySelector('#scoreTable');
+        this.scoreboardEl = document.querySelector('#scoreboard');
+    }
+
+    show(){
+        this.scoreboardEl.style.display = 'flex';
+        for(let i=0; i<10; i++){
+            const tr = this.table.insertRow();
+            tr.innerHTML = `<td>${i+1}.</td>
+                            <td>john</td>
+                            <td></td>
+                            <td></td>`;
+            if(i == 0){
+                tr.classList.add('first');
+            }
+            if(i==1){
+                tr.classList.add('second');
+            }
+            if(i==2){
+                tr.classList.add('third');
+            }
+        }
+    }
+
+    hide(){
+        this.scoreboardEl.style.display = 'none';
     }
 }
 
-const game = new Game(6);
+const game = new Game(2);
+const scoreboard = new Scoreboard();
 game.createGame();
+
+const newGameButton = document.querySelector("#newGameButton");
+newGameButton.addEventListener('click', e => {
+    if(scoreboard.scoreboardEl.style.display != 'none'){
+        scoreboard.scoreboardEl.style.display = 'none';
+        game.gameEl.style.display = 'flex';
+    }
+    if(game.gameStarted){
+        alert("really wanna do it?"); //TODO nice dialog
+        game.createGame();
+    } else {
+        game.createGame();
+    }
+});
+const scoreBoardButton = document.querySelector('#scoreboardButton');
+scoreBoardButton.addEventListener('click', e => {
+    game.hide();
+    scoreboard.show();
+});
 

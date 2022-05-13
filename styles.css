@@ -1,12 +1,10 @@
 body {
     margin: 0;
+    /* height: 100vh; */
     min-height: 100vh;
-    min-width: 100vw;
     display: flex;
-    flex-flow: column;
-}
-
-#game {
+    flex-direction: column;
+    align-items: center;
     background:
     linear-gradient(27deg, #151515 5px, transparent 5px) 0 5px,
     linear-gradient(207deg, #151515 5px, transparent 5px) 10px 0px,
@@ -16,10 +14,16 @@ body {
     linear-gradient(#1d1d1d 25%, #1a1a1a 25%, #1a1a1a 50%, transparent 50%, transparent 75%, #242424 75%, #242424);
     background-color: #131313;
     background-size: 20px 20px;
+    position: relative;
+}
+
+#game {
     display: flex;
     align-items: center;
     flex-flow: column;
-    min-height: 800px;
+    height: max-content;
+    width: max-content;
+    padding-bottom: 40px;
     flex-grow: 1;
 }
 
@@ -30,6 +34,8 @@ footer {
     font-size: 15px;
     color: white;
     display: flex;
+    position: absolute;
+    bottom: 0;
 }
 
 #footer-left{
@@ -52,11 +58,13 @@ footer {
 
 #menu {
     display: flex;
-    gap: 10px;
+    gap: 8px;
     justify-content: center;
     align-items: center;
     background-color: black;
-    height: 50px;
+    height: 2.5em; /*??*/
+    min-height: 40px;
+    width: 100%;
 }
 
 .menubutton {
@@ -73,13 +81,6 @@ footer {
     cursor: pointer;
 }
 
-#head {
-    background-color: burlywood;
-    padding: 10;
-    margin: 0;
-    height: 50px;
-}
-
 #stats {
     margin: 0;
     display: flex;
@@ -87,20 +88,24 @@ footer {
 }
 
 .statsline {
-    width: 600px;
+    /* width: 17.5em; */
+    min-height: 20px;
+    /* min-width: ; */
     text-align: right;
-    font-size: 20px;
-    padding: 10px;
+    font-size: 1em;
+    padding: 5px;
     color: white;
 }
 
 .tile {
-    width: 100px;
-    height: 100px;
+    width: 10vh;
+    min-width: 40px;
+    min-height: 40px;
+    height: 10vh;
     cursor: pointer;
     border-radius: 5px;
     margin: 0;
-    font-size: 50px;
+    font-size: 2em;
     background-color: transparent;
     perspective: 1000px;
 }
@@ -191,10 +196,6 @@ button {
     font-size: 30px;
     width: 30%;
     height: 50px;
-}
-
-#game {
-    /* display: none; */
 }
 
 #scoreboard {

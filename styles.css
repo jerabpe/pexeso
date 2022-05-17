@@ -112,7 +112,7 @@ footer {
     cursor: pointer;
     border-radius: 5px;
     margin: 0;
-    font-size: 2em;
+    font-size: 7vh;
     background-color: transparent;
     perspective: 1000px;
 }
@@ -263,5 +263,6 @@ td {
     .tile {
         width: 12vw;
         height: 12vw;
+        font-size: 7vw;
     }
 }

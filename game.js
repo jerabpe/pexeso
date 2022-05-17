@@ -331,7 +331,7 @@ class Scoreboard extends Page {
         this.table.tHead.innerHTML = '<tr><th>Position</th><th>Name</th><th>Moves</th><th>Time</th></tr>';
         const body = this.table.createTBody();
         const scores = [];
-        const jsonScores = JSON.parse(window.localStorage.getItem('scores'));
+        let jsonScores = JSON.parse(window.localStorage.getItem('scores'));
         
         if(!jsonScores){
             jsonScores = [];
@@ -427,6 +427,7 @@ class Page404 extends Page {
 
 const scoreboard = new Scoreboard();
 const game = new Game(6);
+
 game.createGame();
 
 const router = new Router({

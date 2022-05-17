@@ -100,7 +100,6 @@ class Game extends Page {
             scores = [];
         }
         scores.push(score);
-        // window.localStorage.setItem(JSON.stringify(score), '');
         window.localStorage.setItem('scores', JSON.stringify(scores));
     }
 

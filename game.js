@@ -1,6 +1,10 @@
 const emLB = 127813;
 const emUB = 127867;
 
+/**
+ * @param {*} size dimension of the game
+ * @returns array of unique emojis(codes) for the game
+ */
 function generateEmojis(size){
     arr = [];
     while(arr.length < (size*size/2)){
@@ -15,6 +19,11 @@ function generateEmojis(size){
     return arr;
 }
 
+/**
+ * 
+ * @param {*} time time in seconds. 
+ * @returns string of the given time eg. '50 s' or '5 min 12 s'.
+ */
 function time2Str(time){
     if(time > 60){
         return `${Math.floor(time/60)} min ${time%60} s`;
@@ -23,6 +32,9 @@ function time2Str(time){
     }
 }
 
+/**
+ * Abstract class representing page.
+ */
 class Page {
     constructor({key, pageEl}){
         this.key = key;
@@ -77,10 +89,19 @@ class Game extends Page {
         });
     }
 
+    /**
+     * saves score to LocalStorage
+     */
     saveScore(){
-        const nameInput = this.nameInput.value;
-        const score = new Score(nameInput, this.timer, this.moveCounter);
-        window.localStorage.setItem(JSON.stringify(score), '');
+        const nameInputText = this.nameInput.value;
+        const score = new Score(nameInputText, this.timer, this.moveCounter);
+        let scores = JSON.parse(window.localStorage.getItem('scores'));
+        if(!scores){
+            scores = [];
+        }
+        scores.push(score);
+        // window.localStorage.setItem(JSON.stringify(score), '');
+        window.localStorage.setItem('scores', JSON.stringify(scores));
     }
 
     validateInput(input){
@@ -95,6 +116,9 @@ class Game extends Page {
         this.scoreForm.style.visibility = 'hidden';
     }
 
+    /**
+     * clears game content and restarts stats
+     */
     clearGame(){
         if(this.timerLoop){
             clearInterval(this.timerLoop);
@@ -113,19 +137,22 @@ class Game extends Page {
         this.hideNameInput();
     }
 
-    pauseGame(button){
+    pauseGame(){
         if(this.timerLoop){
             clearInterval(this.timerLoop);
             this.timerLoop = null;
         }
     }
 
-    continueGame(button){
+    continueGame(){
         if(!this.timerLoop){
             this.timerLoop = setInterval(this.incrementTimer, 1000, this);
         }
     }
 
+    /**
+     * creates new game
+     */
     createGame(){
         this.clearGame();
         let pics = generateEmojis(this.size); //choose random emojis from range emLB,emUB
@@ -161,6 +188,11 @@ class Game extends Page {
         this.hidePage();
     }
 
+    /**
+     * Event handler for clicking on a tile.
+     * @param {*} e event
+     * @param {*} game current game instance
+     */
     tileClickHandler(e, game){
         if(!game.gameStarted){
             game.timerLoop = setInterval(game.incrementTimer, 1000, game);
@@ -184,17 +216,18 @@ class Game extends Page {
         
     }
 
+    /**
+     * Checks if two flipped tiles match, and removes them if they do, flips them back otherwise.
+     * If it removes the tiles and there are none left, it stops the game.
+     * @param {*} tileA flipped tile
+     * @param {*} tileB flipped tile
+     */
     checkPair(tileA, tileB){
         const itemA = this.items[Number(tileA.dataset.row) * this.size + Number(tileA.dataset.col)];
         const itemB = this.items[Number(tileB.dataset.row) * this.size + Number(tileB.dataset.col)];
         if(itemA == itemB){
             this.found += 2;
             if(this.found == this.size*this.size){
-                //konec hry
-                //show all pictures
-                //show text
-                //play sound
-                //save score
                 this.stopGame();
             }
             setTimeout(() => this.removeTiles(tileA, tileB), 1000);
@@ -213,6 +246,9 @@ class Game extends Page {
         tileB.style.visibility = 'hidden';
     }
 
+    /**
+     * Stops the game and shows winner dialog.
+     */
     stopGame(){
         this.gameStarted = false;
         clearInterval(this.timerLoop);
@@ -267,6 +303,9 @@ class Game extends Page {
     }
 }
 
+/**
+ * Score of a game. (name of player, elapsed time, number of moves)
+ */
 class Score {
     constructor(name, time, moves){
         this.name = name;
@@ -292,11 +331,16 @@ class Scoreboard extends Page {
         this.table.createTHead();
         this.table.tHead.innerHTML = '<tr><th>Position</th><th>Name</th><th>Moves</th><th>Time</th></tr>';
         const body = this.table.createTBody();
-        const keys = Object.keys(window.localStorage);
         const scores = [];
-        for(let s of keys){
-            scores.push(JSON.parse(s));
+        const jsonScores = JSON.parse(window.localStorage.getItem('scores'));
+        
+        if(!jsonScores){
+            jsonScores = [];
         }
+        for(let s of jsonScores){
+            scores.push(s);
+        }
+        console.log(scores);
         scores.sort((a,b) => {
             if(a.moves == b.moves){
                 return a.time - b.time;
@@ -343,6 +387,9 @@ class Scoreboard extends Page {
     }
 }
 
+/**
+ * Router of application managing switching of "pages" and history.
+ */
 class Router {
     constructor({pages, defaultPage}){
         this.pages = pages;
@@ -364,7 +411,7 @@ class Router {
             this.currentPage.hidePage();
         }
 
-        // const page404 = this.pages.find(p => p.key === '404');
+        const page404 = this.pages.find(p => p.key === '404');
         const pageInstanceMatched = this.pages.find(p => p.key === (page ?? this.defaultPage));
         const currentPage = pageInstanceMatched ?? page404;
 
@@ -373,13 +420,19 @@ class Router {
     }
 }
 
+class Page404 extends Page {
+    constructor(){
+        super({key: '404', pageEl: document.querySelector('#notFound')});
+    }
+}
+
 const scoreboard = new Scoreboard();
-const game = new Game(2);
+const game = new Game(6);
 game.createGame();
 
 const router = new Router({
     pages: [
-        game, scoreboard
+        game, scoreboard, new Page404()
     ],
     defaultPage: 'game'
 });
@@ -418,11 +471,24 @@ continueGameButton.addEventListener('click', e => {
 });
 
 const playAgainButton = document.querySelector('#playAgainButton');
-playAgainButton.addEventListener('click', e => game.createGame());
+playAgainButton.addEventListener('click', e => {
+    e.preventDefault();
+    if(document.querySelector('#scoreForm').style.visibility === 'visible'){
+        if(confirm('Are you sure you want to start a new game without saving score?')){
+            game.createGame();
+            router.route(e.target.href);
+            window.history.pushState(null, null, e.target.href);
+        }
+    } else {
+        game.createGame();
+        router.route(e.target.href);
+        window.history.pushState(null, null, e.target.href);
+    }
+});
 
 const winScoreBoardButton = document.querySelector('#winScoreBoardButton');
 winScoreBoardButton.addEventListener('click', e => {
-    //TODO
-    game.hidePage();
-    scoreboard.showPage();
+    e.preventDefault();
+    router.route(e.target.href);
+    window.history.pushState(null, null, e.target.href);
 });

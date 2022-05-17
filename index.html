@@ -13,6 +13,7 @@
             <a id="newGameButton" class="menubutton" href="?page=game">New game</a>
             <a id="scoreboardButton" class="menubutton" href="?page=score">Scoreboard</a>
         </nav>
+        <div id="notFound">Nothing to see here, just 404...</div>
         <div id="game">
             <div id="stats">
                 <div class="statsline" id="movesCounter">moves: 0</div>
@@ -29,8 +30,8 @@
                     <input type="text" id="name" name="name" required minlength="3" maxlength="20">
                     <button id="saveScoreButton">Save score</button>
                 </form>
-                <button id="playAgainButton" class="winButton">Play again</button>
-                <button id="winScoreBoardButton" class="winButton">Scoreboard</button>
+                <button id="playAgainButton" class="winButton"><a href="?page=game">Play again</a></button>
+                <button id="winScoreBoardButton" class="winButton"><a href="?page=score">Scoreboard</a></button>
             </div>
         </div>
         <div id="scoreboard">

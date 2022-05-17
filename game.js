@@ -23,11 +23,28 @@ function time2Str(time){
     }
 }
 
-class Game {
+class Page {
+    constructor({key, pageEl}){
+        this.key = key;
+        this.pageElement = pageEl;
+    }
+
+    showPage(){
+        this.pageElement.style.display = 'flex';
+    }
+
+    hidePage(){
+        this.pageElement.style.display = 'none';
+    }
+}
+
+class Game extends Page {
     constructor(size){
+        super({key: 'game', pageEl: document.querySelector('#game')});
         this.counterEl = document.querySelector("#gameTime");
         this.movesEl = document.querySelector("#movesCounter");
         this.board = document.querySelector("#gameboard");
+        this.menu = document.querySelector('#menu');
         this.timer = 0;
         this.size = size%2 == 0 ? size : size+1;
         this.moveCounter = 0;
@@ -37,15 +54,10 @@ class Game {
         this.flipped = [];
         this.found = 0;
         this.tiles = null;
+        this.continueGameButton = null;
         this.winEl = document.querySelector('#win');
-        document.querySelector('#playAgainButton').addEventListener('click', e => this.createGame());
-        document.querySelector('#winScoreBoardButton').addEventListener('click', e => {
-            this.hide();
-            scoreboard.show();
-        })
         this.wonTextEl = document.querySelector('#wonText');
         this.nameInput = document.querySelector('#name');
-        this.gameEl = document.querySelector('#game');
         this.saveScoreButton = document.querySelector('#saveScoreButton');
         this.scoreForm = document.querySelector('#scoreForm');
         this.saveScoreButton.addEventListener('click', e => {
@@ -98,6 +110,20 @@ class Game {
         this.tiles = [];
         this.found = 0;
         this.gameStarted = false;
+        this.hideNameInput();
+    }
+
+    pauseGame(button){
+        if(this.timerLoop){
+            clearInterval(this.timerLoop);
+            this.timerLoop = null;
+        }
+    }
+
+    continueGame(button){
+        if(!this.timerLoop){
+            this.timerLoop = setInterval(this.incrementTimer, 1000, this);
+        }
     }
 
     createGame(){
@@ -132,6 +158,7 @@ class Game {
             }
         }
         this.items = pics;
+        this.hidePage();
     }
 
     tileClickHandler(e, game){
@@ -221,8 +248,22 @@ class Game {
         }
     }
 
-    hide(){
-        this.gameEl.style.display = 'none';
+    hidePage(){
+        super.hidePage();
+        if(this.gameStarted){
+            this.pauseGame();
+        }
+    }
+
+    showPage(){
+        super.showPage();
+        if(this.gameStarted){
+            this.continueGame();
+        }
+        const continueButton = document.querySelector('#continueGameButton');
+        if(!continueButton.attributes.getNamedItem('hidden')){
+            continueButton.setAttribute('hidden', '');
+        }
     }
 }
 
@@ -234,16 +275,16 @@ class Score {
     }
 }
 
-class Scoreboard {
+class Scoreboard extends Page {
     constructor(){
-        this.table = document.querySelector('#scoreTable');
-        this.scoreboardEl = document.querySelector('#scoreboard');
+        super({key: 'score', pageEl: document.querySelector('#scoreboard')});
+        this.table = null;
         this.storage = window.localStorage;
     }
 
-    show(){
-        this.scoreboardEl.innerHTML = '';
-        this.scoreboardEl.style.display = 'flex';
+    render(){
+        this.pageElement.innerHTML = '';
+        this.pageElement.style.display = 'flex';
         this.table = document.createElement('table');
         this.table.id = 'scoreTable';
         const caption = document.createElement('caption');
@@ -289,11 +330,58 @@ class Scoreboard {
                 tr.classList.add('third');
             }
         }
-        this.scoreboardEl.append(this.table);
+        this.pageElement.append(this.table);
     }
 
-    hide(){
-        this.scoreboardEl.innerHTML = '';
+    hidePage(){
+        super.hidePage();
+        this.pageElement.innerHTML = '';
+    }
+
+    showPage(){
+        super.showPage();
+        this.render();
+    }
+}
+
+class Router {
+    constructor({pages, defaultPage}){
+        this.pages = pages;
+        this.defaultPage = defaultPage;
+        this.currentPage = null;
+        
+        this.route(window.location.href);
+
+        window.addEventListener('popstate', e => {
+            this.route(window.location.href);
+        });
+
+        // window.addEventListener('click', e => { //TODO change this to menu button listeners
+        //     const element = e.target;
+        //     if(element.nodeName === 'A'){
+        //         e.preventDefault();
+        //         this.route(element.href);
+        //         window.history.pushState(null, null, element.href);
+        //     }
+        // });
+    }
+
+    route(urlStr){
+        // console.log(urlStr);
+        const url = new URL(urlStr);
+        // console.log(url);
+        const page = url.searchParams.get('page');
+
+        if(this.currentPage){
+            this.currentPage.hidePage();
+        }
+
+        // const page404 = this.pages.find(p => p.key === '404');
+        const pageInstanceMatched = this.pages.find(p => p.key === (page ?? this.defaultPage));
+        const currentPage = pageInstanceMatched ?? page404;
+
+        this.currentPage = currentPage;
+        this.currentPage.showPage();
     }
 }
 
@@ -301,23 +389,52 @@ const scoreboard = new Scoreboard();
 const game = new Game(6);
 game.createGame();
 
+const router = new Router({
+    pages: [
+        game, scoreboard
+    ],
+    defaultPage: 'game'
+});
+
 const newGameButton = document.querySelector("#newGameButton");
 newGameButton.addEventListener('click', e => {
-    if(scoreboard.scoreboardEl.style.display != 'none'){
-        scoreboard.scoreboardEl.style.display = 'none';
-        game.gameEl.style.display = 'flex';
-    }
+    e.preventDefault();
     if(game.gameStarted){
         if(confirm("You are in the middle of a game, are you sure you want to start a new one?")){
             game.createGame();
+            router.route(e.target.href);
+            window.history.pushState(null, null, e.target.href);
         }
     } else {
         game.createGame();
+        router.route(e.target.href);
+        window.history.pushState(null, null, e.target.href);
     }
 });
 const scoreBoardButton = document.querySelector('#scoreboardButton');
 scoreBoardButton.addEventListener('click', e => {
-    game.hide();
-    scoreboard.show();
+    if(game.gameStarted){
+        continueGameButton.style.display = 'block';
+    }
+    e.preventDefault();
+    router.route(e.target.href);
+    window.history.pushState(null, null, e.target.href);
 });
 
+const continueGameButton = document.querySelector('#continueGameButton');
+continueGameButton.addEventListener('click', e => {
+    continueGameButton.style.display = 'none';
+    e.preventDefault();
+    router.route(e.target.href);
+    window.history.pushState(null, null, e.target.href);
+});
+
+const playAgainButton = document.querySelector('#playAgainButton');
+playAgainButton.addEventListener('click', e => game.createGame());
+
+const winScoreBoardButton = document.querySelector('#winScoreBoardButton');
+winScoreBoardButton.addEventListener('click', e => {
+    //TODO
+    game.hidePage();
+    scoreboard.showPage();
+});

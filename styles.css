@@ -24,7 +24,7 @@ body {
 #game {
     display: flex;
     align-items: center;
-    flex-flow: column;
+    flex-direction: column;
     height: max-content;
     width: max-content;
     padding-bottom: 40px;
@@ -76,7 +76,6 @@ footer {
     color:white;
     background-color: black;
     font-size: 20px;
-    margin-left: 10px;
     text-decoration: none;
     color: white;
     display: block;
@@ -95,9 +94,8 @@ footer {
 }
 
 .statsline {
-    /* width: 17.5em; */
     min-height: 20px;
-    /* min-width: ; */
+    margin: 0;
     text-align: right;
     font-size: 1em;
     padding: 5px;
@@ -164,10 +162,8 @@ footer {
 }
 
 #win {
-    
     position: absolute;
     top: 40px;
-    /* visibility: hidden; */
     display: flex;
     flex-flow: column;
     align-items: center;
@@ -178,6 +174,8 @@ footer {
     background-color: transparent;
     color: gold;
     font-size: 80px;
+    text-align: center;
+    /* margin-bottom: 10px; */
 }
 
 #scoreForm {
@@ -189,6 +187,7 @@ footer {
     color: white;
     text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;
     font-size: 30px;
+    text-align: center;
 }
 
 #scoreForm > label {
@@ -279,11 +278,67 @@ td {
         font-size: 7vw;
     }
 
-    #wonText {
-        
+    footer {
+        position: absolute;
+        bottom: 0;
+    }
+}
+
+@media (max-height: 550px){
+    #gameboard {
+        gap: 3px;
+    }
+    
+    .menubutton {
+        font-size: 15px;
     }
 
-    #win {
+    #movesCounter {
+        align-self: center;
+    }
 
+    #stats {
+        flex-direction: row;
+        width: 100%;
+        justify-content: space-between;
+    }
+
+    #winnerText {
+        text-align: center;
+        font-size: 3em;
+        margin-bottom: 10px;
+    }
+
+    #wonText {
+        font-size: 2em;
+        margin-top: 0;
+        margin-bottom: 10px;
+    }
+
+    #scoreForm {
+        margin-bottom: 10px;
+        height: fit-content;
+        vertical-align: middle;
+    }
+
+    #scoreForm > label {
+        font-size: 2em;
+    }
+
+    #scoreForm > input {
+        text-align: center;
+        font-size: 1.5em;
+        height: 1.5em;
+        box-sizing: border-box;
+    }
+
+    .winButton {
+        font-size: 25px;
+        height: 40px;
+    }
+
+    #scoreTable {
+        /* height: 60vh; */
+        font-size: 20px;
     }
 }

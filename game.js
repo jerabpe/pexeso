@@ -234,7 +234,7 @@ class Game extends Page {
             this.scoreForm.style.visibility = 'visible';
             const timeStr = this.timer >= 60 ? `${Math.floor(game.timer/60)} min ${game.timer%60} s`: `${this.timer} s`;
             this.wonTextEl.innerText = `You won with ${this.moveCounter} moves in ${timeStr}`;
-            this.board.style.filter = 'blur(2px)';
+            this.board.style.filter = 'blur(2px) grayscale(1)';
             this.nameInput.focus();
         }, 1500);
     }
@@ -287,17 +287,15 @@ class Scoreboard extends Page {
         this.pageElement.style.display = 'flex';
         this.table = document.createElement('table');
         this.table.id = 'scoreTable';
-        const caption = document.createElement('caption');
-        caption.innerText = 'Top 10 scores';
-        this.table.append(caption);
-        const thead = this.table.insertRow();
-        thead.innerHTML = '<tr><th>Position</th><th>Name</th><th>Moves</th><th>Time</th></tr>';
-        this.table.append(thead);
+        this.table.createCaption();
+        this.table.caption.innerText = 'Top 10 scores';
+        this.table.createTHead();
+        this.table.tHead.innerHTML = '<tr><th>Position</th><th>Name</th><th>Moves</th><th>Time</th></tr>';
+        const body = this.table.createTBody();
         const keys = Object.keys(window.localStorage);
         const scores = [];
         for(let s of keys){
             scores.push(JSON.parse(s));
-
         }
         scores.sort((a,b) => {
             if(a.moves == b.moves){
@@ -307,7 +305,7 @@ class Scoreboard extends Page {
             }
         });
         for(let i=0; i<10; i++){
-            const tr = this.table.insertRow();
+            const tr = document.createElement('tr');
             let name = '';
             let moves = '';
             let time = '';
@@ -329,6 +327,7 @@ class Scoreboard extends Page {
             if(i==2){
                 tr.classList.add('third');
             }
+            body.append(tr);
         }
         this.pageElement.append(this.table);
     }
@@ -355,21 +354,10 @@ class Router {
         window.addEventListener('popstate', e => {
             this.route(window.location.href);
         });
-
-        // window.addEventListener('click', e => { //TODO change this to menu button listeners
-        //     const element = e.target;
-        //     if(element.nodeName === 'A'){
-        //         e.preventDefault();
-        //         this.route(element.href);
-        //         window.history.pushState(null, null, element.href);
-        //     }
-        // });
     }
 
     route(urlStr){
-        // console.log(urlStr);
         const url = new URL(urlStr);
-        // console.log(url);
         const page = url.searchParams.get('page');
 
         if(this.currentPage){
@@ -386,7 +374,7 @@ class Router {
 }
 
 const scoreboard = new Scoreboard();
-const game = new Game(6);
+const game = new Game(2);
 game.createGame();
 
 const router = new Router({

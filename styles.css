@@ -121,12 +121,21 @@ footer {
     position: relative;
     width: 100%;
     height: 100%;
-    transition: transform 0.8s;
+    -webkit-transition: all 0.8s;
+    -moz-transition: all 0.8s;
+    -o-transition: all 0.8s;
+    transition: all 0.8s;
+    -moz-transform-style: preserve-3d;
+    -webkit-transform-style: preserve-3d;
     transform-style: preserve-3d;
 }
 
 .tile.flipped .inner-tile {
-    transform: rotateY(180deg);
+    -webkit-transform: rotateY(-180deg);
+    -moz-transform: rotateY(-180deg);
+    -o-transform: rotateY(-180deg);
+    -ms-transform: rotateY(-180deg);
+    transform: rotateY(-180deg);
 }
 
 .tile-front, .tile-back {
@@ -144,6 +153,10 @@ footer {
 
 .tile-back {
     background-color: lightgoldenrodyellow;
+    -webkit-transform: rotateY(180deg);
+    -moz-transform: rotateY(180deg);
+    -o-transform: rotateY(180deg);
+    -ms-transform: rotateY(180deg);
     transform: rotateY(180deg);
     display: flex;
     justify-content: center;
@@ -264,5 +277,13 @@ td {
         width: 12vw;
         height: 12vw;
         font-size: 7vw;
+    }
+
+    #wonText {
+        
+    }
+
+    #win {
+
     }
 }

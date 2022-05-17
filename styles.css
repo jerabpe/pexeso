@@ -214,22 +214,41 @@ footer {
 
 #saveScoreButton {
     font-size: 20px;
+    border-radius: 5px;
+    background-color: whitesmoke;
+    border: solid 2px black;
+    cursor: pointer;
 }
 
-button {
-    border-radius: 5px;
+#saveScoreButton:hover {
+    background-color: lightgray;
 }
 
 .winButton {
     margin: 10px;
     font-size: 30px;
-    width: 30%;
+    width: 25%;
     height: 50px;
+    border-radius: 5px;
+    background-color: whitesmoke;
+    text-align: center;
+    justify-content: center;
+    cursor: pointer;
+    font-family: Arial, Helvetica, sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border: solid 2px black;
+}
+
+.winButton:hover {
+    background-color: lightgray;
 }
 
 .winButton > a {
     text-decoration: none;
     color: black;
+    display: block;
 }
 
 #scoreboard {

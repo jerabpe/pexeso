@@ -426,7 +426,7 @@ class Page404 extends Page {
 }
 
 const scoreboard = new Scoreboard();
-const game = new Game(2);
+const game = new Game(6);
 game.createGame();
 
 const router = new Router({
